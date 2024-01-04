@@ -50,7 +50,7 @@ def fetch_sentences():
     elif request.method == 'POST':
         data = request.get_json()
 
-        sentence = Sentence(text=data['sentence'])
+        sentence = Sentence(text=data['sentence'], user_id=current_user.id)
         db.session.add(sentence)
         db.session.flush()
 
@@ -127,7 +127,7 @@ def get_sentence(id):
 def fetch_new_sentences(page=1, per_page=10):
     if request.method == 'GET':
         result = db.paginate(db.select(Sentence)
-                             .where(Sentence.user_id == current_user.id), page=page, per_page=per_page)
+                             .where(Sentence.user_id == current_user.id).where(Sentence.seen == False), page=page, per_page=per_page)
         return jsonify({ 'sentences': [sentence.to_dict() for sentence in result], 
                          'next_page': result.next_num, 
                          'prev_page': result.prev_num  }) 
