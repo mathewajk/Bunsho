@@ -8,6 +8,7 @@ const quiz = useQuizStore()
 
 const input  = ref()
 const answer = ref('')
+const loading = ref(true)
 
 const focusInput = () => {
   nextTick(() => {
@@ -60,50 +61,61 @@ onMounted( () => {
       quiz.state.hintActive = true
     }
 	});
-  quiz.initSession().then(() => { focusInput() })
+  quiz.initSession().then(() => { 
+    loading.value = false;
+    focusInput() 
+  })
 })
 
 
 </script>
 
 <template>
-  <ProgressContainer :progress="quiz.completedPercent()" :complete="quiz.state.index" :total="quiz.state.words.length"/>
-  <div v-if=quiz.question.sentence class="sentence" :class="quiz.state.activeTransition">
-    <div v-for="word in quiz.question.sentence.words">
+  <template v-if="!loading">
+    <ProgressContainer :progress="quiz.completedPercent()" :complete="quiz.state.index" :total="quiz.state.words.length"/>
+    <div v-if=quiz.question.sentence class="sentence" :class="quiz.state.activeTransition">
+      <div v-for="word in quiz.question.sentence.words">
+        <div class="word">
+          <template v-if="word.pos == quiz.question.target?.pos">
+            <input 
+            type="text"
+            ref="input"
+            v-model="answer"
+            :class="quiz.state.answerStatus"
+            :disabled="quiz.state.inputDisabled"
+            @keyup.enter="handleInput"
+            :size="word.text.length + 1">
+          </template>
+          <template v-else>
+            {{ word.text }}
+          </template>
+        </div>
+        <Transition name="grow-fade">
+            <div class="gloss" :class="hintActive(word)" v-if="quiz.state.showGloss || hintActive(word)">{{ word.gloss }}</div>
+        </Transition>
+      </div>
       <div class="word">
-        <template v-if="word.pos == quiz.question.target?.pos">
-          <input 
-          type="text"
-          ref="input"
-          v-model="answer"
-          :class="quiz.state.answerStatus"
-          :disabled="quiz.state.inputDisabled"
-          @keyup.enter="handleInput"
-          :size="word.text.length + 1">
-        </template>
-        <template v-else>
-          {{ word.text }}
-        </template>
+        。
       </div>
       <Transition name="grow-fade">
-          <div class="gloss" :class="hintActive(word)" v-if="quiz.state.showGloss || hintActive(word)">{{ word.gloss }}</div>
+            <div class="gloss" v-if="quiz.state.showGloss"></div>
       </Transition>
     </div>
-    <div class="word">
-      。
+    <div v-else class="study-finished" :class="quiz.state.activeTransition">
+        <p>おめでとうございます！学習が終わりました。</p>
+        <p>再読み込み、または新しい文章を勉強しますか？</p>
     </div>
-    <Transition name="grow-fade">
-          <div class="gloss" v-if="quiz.state.showGloss"></div>
-    </Transition>
-  </div>
-  <div v-else class="study-finished" :class="quiz.state.activeTransition">
-      <p>おめでとうございます！学習が終わりました。</p>
-      <p>再読み込み、または新しい文章を勉強しますか？</p>
+  </template>
+  <div class="loading-container" v-else>
+    Loading session...
   </div>
 </template>
 
 <style scoped>
 
+.loading-container {
+  text-align: center;
+}
 .gloss {
   display: flex;
   justify-content: space-around;
