@@ -1,0 +1,36 @@
+@import './base.css';
+
+#app {
+  width: 100%;
+  margin: 0 auto;
+  font-weight: normal;
+}
+
+a {
+  text-decoration: none;
+  color: rgb(0, 107, 189);
+  transition: 0.4s;
+}
+
+.study-finished {
+  font-size: 1.5rem;
+}
+
+@media (hover: hover) {
+  a:hover {
+    color: rgb(0, 47, 178);
+  }
+}
+
+main {
+  line-height: 1.5;
+  position: relative;
+  margin: 0;
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.wrapper {
+  padding: 0rem 1rem;
+}
