@@ -20,8 +20,10 @@ axios.get(path)
 
 <template>
   <div class="wrapper">
-    <h1>Sentence Overview</h1>
-    <div class="add-sentence"><RouterLink to="/add">+ Add sentence</RouterLink></div>
+    <div class="header">
+      <div><h1>Your Sentences</h1></div>
+      <div class="add-sentence"><button><RouterLink to="/add">+ Add sentence</RouterLink></button></div>
+    </div>
     <div class="sentence-list">
       <div class="sentence-wrapper" v-for="sentence, i in sentences.sentences">
         <div class="sentence-item bg-grey" v-if="i % 2 == 0">
@@ -38,8 +40,32 @@ axios.get(path)
 
 <style scoped>
 
+button {
+  background-color: rgb(0, 107, 189);
+  padding: 5px 10px;
+  border-radius: 10px;
+  transition: ease-out 0.1s;
+}
+
+button a {
+  color: white;
+}
+
+button:hover {
+  background-color: rgb(25, 56, 143);
+  transition: ease-in 0.15s;
+}
+
 h1 {
- margin-bottom: 30px;
+ display: inline;
+ font-size: 2rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
 }
 
 .add-sentence {
