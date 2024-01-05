@@ -46,7 +46,7 @@ class User(db.Model, UserMixin):
         return token
     
     def refresh_token(self):
-        query = db.select(UserToken).where(UserToken.user_id == self.id)
+        query = db.select(UserToken).where(UserToken.user_id == self.id).order_by(UserToken.exp.desc())
         token = db.session.execute(query).first()[0]
         if(self.is_authenticated):
             token.iat=datetime.utcnow()
@@ -75,14 +75,15 @@ class Sentence(db.Model):
     __tablename__ = 'sentences'
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    text = db.Column(db.Text)
+    text = db.Column(db.Text, nullable=False)
+    #punctuation = db.Column(db.Text, nullable=True)
     words = db.relationship('Word', backref="sentence", lazy=False)
 
-    seen = db.Column(db.Boolean, default=False)
+    seen = db.Column(db.Boolean, default=False, nullable=False)
     due = db.Column(db.DateTime, nullable=True)
 
     def to_dict(self):
