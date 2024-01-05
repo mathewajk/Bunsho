@@ -38,7 +38,7 @@ def get_stats():
         new_sentences_count = db.session.scalar(db.select(func.count()).select_from(new_sentences_filter))
         
         return jsonify({'available_words': due_words_count, 
-                        'available_sentences': new_sentences_count}), 201
+                        'available_sentences': new_sentences_count}), 200
         
 
 @api.route('/sentences', methods=('GET', 'POST'))
@@ -61,7 +61,7 @@ def fetch_sentences():
             i+=1
         
         db.session.commit()
-        return jsonify({ 'sentence': sentence.to_dict() }), 201
+        return jsonify({ 'sentence': sentence.to_dict() }), 200
 
 @api.route('/sentences/<int:id>', methods=['POST'])
 @login_required
@@ -79,7 +79,7 @@ def update_sentence(id):
             db.session.add(word)
 
         db.session.commit()
-        return jsonify( { 'msg': 'success' } ), 201
+        return jsonify( { 'msg': 'success' } ), 200
 
 @api.route('/words/', methods=['GET', 'POST'])
 @login_required
@@ -88,8 +88,7 @@ def fetch_words():
         user_sentences = db.select(Sentence).where(Sentence.user_id == current_user.id).subquery()
         words_query = db.select(Word).join(user_sentences)
         words = db.session.execute(words_query)
-        #words = Word.query.all()
-        return jsonify({ 'words': [s.to_dict() for s in words] })
+        return jsonify({ 'words': [s.to_dict() for s in words] }), 200
 
 @api.route('/words/<int:id>', methods=['POST'])
 @login_required
