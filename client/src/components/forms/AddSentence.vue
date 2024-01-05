@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import axios from 'axios';
 import { getNode } from '@formkit/core'
 import router from '@/router';
@@ -7,55 +7,74 @@ import router from '@/router';
 const parseSentenceUrl = 'http://localhost:5001/api/sentence/process'
 const addSentenceUrl = 'http://localhost:5001/api/sentences'
 
+let id = 0
+const incrementId = () => {
+    return id++
+}
+
+const parsedSentence = ref<any[]>([])
 const parseSentence = ( fields:any ) => {
     const splitSentence = fields.sentence.split(' ')
     if(splitSentence.length > 1) {
-        parsedSentence.value = splitSentence
+        parsedSentence.value = splitSentence.map((word:string, i:number) => { return {'id': incrementId(), 'word': word, 'gloss': 'test', 'deleted': false} })
     } else {
         axios.post(parseSentenceUrl, fields).then( (result) => {
-                parsedSentence.value = result.data.result
+                parsedSentence.value = result.data.result.map((word:string, i:number) => { return {'id': incrementId(), 'word': word, 'gloss': 'test', 'deleted': false} })
             }
         )
     }
 }
 
+const getIndex = (word:any) => {
+    return parsedSentence.value.findIndex( (parsedWord:any) => parsedWord.id == word.id)
+}
+
+const filteredWords = computed(() => parsedSentence.value.filter( (word) => word.deleted == false) )
+const getFilteredIndex = (word:any) => {
+    return filteredWords.value.findIndex( (parsedWord:any) => parsedWord.id == word.id)
+}
+
 const addSentence = ( fields:any ) => {
     let data = {sentence: '', words: <string[]>[], gloss: <string[]>[]}
     parsedSentence.value.forEach( (word, i) => {
-        data.sentence += fields['word-' + i]
-        data.words.push(fields['word-' + i])
-        data.gloss.push(fields['gloss-' + i])
+        if(word.deleted) { return }
+        data.sentence += word
+        data.words.push(word.word)
+        data.gloss.push(word.gloss)
     })
     axios.post(addSentenceUrl, data).then( (result) => {
         router.push('sentences')
     })
 }
 
+const syncInput = () => {
+    parsedSentence.value.forEach( (word, i) => {
+        getNode('word-' + i)?.input(word.word)
+        getNode('gloss-' + i)?.input(word.gloss)
+    })
+}
+
 const addWord = ( pos:number ) => {
-    parsedSentence.value.splice(pos + 1, 0, '')
+    console.log("Adding word at " + pos)
+    parsedSentence.value.splice(pos, 0, {
+        word: '',
+        gloss: '',
+        deleted: false,
+        id: incrementId()
+    })
+    syncInput()
+}
+
+const removeWord = ( pos:number ) => { parsedSentence.value[pos].deleted = true }
+
+const updateSentence = () => {
     parsedSentence.value.forEach( (word, i) => {
-        if (i < pos + 1) {
-            getNode('word-' + i)?.input(getNode('word-' + i)?.value)
-        } else if (i == pos + 1) {
-            getNode('word-' + i)?.input('')
-        } else if (i > pos + 1) {
-            getNode('word-' + i)?.input(getNode('word-' + (i-1))?.value)
-        }
+        word.word = formData.value['word-' + i]
+        word.gloss = formData.value['gloss-' + i]
     })
 }
 
-const removeWord = ( pos:number ) => {
-    parsedSentence.value.splice(pos, 1)
-    parsedSentence.value.forEach( (word, i) => {
-        if (i < pos) {
-            getNode('word-' + i)?.input(getNode('word-' + i)?.value)
-        } else if (i >= pos) {
-            getNode('word-' + i)?.input(getNode('word-' + (i+1))?.value)
-        }
-    })
-}
-
-const parsedSentence = ref<string[]>([])
+const formData = ref()
 
 </script>
 
@@ -76,31 +95,35 @@ const parsedSentence = ref<string[]>([])
         </FormKit>
     </template>
     <template v-else>
-        <FormKit type="form" @submit="addSentence">
+        {{  filteredWords }}
+        <FormKit v-model="formData" type="form" @submit="addSentence" @change="updateSentence">
             <div class="gloss-wrapper">
                 <div class="gloss-pair" v-for="word, i in parsedSentence">
-                    <label class="formkit-outer">
-                        Word {{ i+1 }}
+                    <label class="formkit-outer" v-if="!word.deleted">
+                        Word {{ getFilteredIndex(word) + 1 }}
                     </label>
                     <FormKit 
                         type="text"
-                        :name="'word-' + i"
+                        :outer-class="word.deleted ? 'hidden' : ''"
                         :id="'word-' + i"
-                        :value="word"
+                        :name="'word-' + i"
+                        :value="word.word"
                         help=""
                         validation="required"
                         placeholder="Lexical item"
                     />
-                    <FormKit 
+                    <FormKit
                         type="text"
-                        :name="'gloss-' + i"
+                        :outer-class="word.deleted ? 'hidden' : ''"
+                        :value="word.gloss"
                         :id="'gloss-' + i"
+                        :name="'gloss-' + i"
                         help=""
                         validation="required"
                         placeholder="Gloss"
                     />
-                    <div class="formkit-outer">
-                        <span class="update-form" @click="addWord(i)">Add</span> / <span class="update-form" @click="removeWord(i)">Remove</span>
+                    <div class="formkit-outer" v-if="!word.deleted">
+                        <span class="update-form" @click="addWord(i + 1)">Add</span> / <span class="update-form" @click="removeWord(i)">Remove</span>
                     </div>
                 </div>
             </div>
@@ -111,8 +134,13 @@ const parsedSentence = ref<string[]>([])
 
 <style>
 
+.hidden {
+    display: none;
+}
+
 h1 {
  margin-bottom: 50px;
+ font-size: 2rem;
 }
 
 .wrapper {
