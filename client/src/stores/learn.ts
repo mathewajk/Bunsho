@@ -5,7 +5,7 @@ import axios from 'axios'
 import UrlPattern from 'url-pattern'
 
 export const useLearnStore = defineStore('learn', () => {
-    const baseUrl = 'http://localhost:5001'
+    const baseUrl = 'http://localhost:5000'
     const updateSentenceURL = new UrlPattern('/api/sentences(/:id)')
     const newSentencesURL = new UrlPattern('/api/sentences/new(/:page)')
 

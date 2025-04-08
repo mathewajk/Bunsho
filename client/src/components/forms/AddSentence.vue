@@ -4,8 +4,8 @@ import axios from 'axios';
 import { getNode } from '@formkit/core'
 import router from '@/router';
 
-const parseSentenceUrl = 'http://localhost:5001/api/sentence/process'
-const addSentenceUrl = 'http://localhost:5001/api/sentences'
+const parseSentenceUrl = 'http://localhost:5000/api/sentence/process'
+const addSentenceUrl = 'http://localhost:5000/api/sentences'
 
 let id = 0
 const incrementId = () => {

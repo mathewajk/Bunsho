@@ -7,10 +7,10 @@ import axios from 'axios'
 
 export const useSessionStore = defineStore('session', () => {
 
-  const baseUrl = 'http://localhost:5001'
-  const tokenUrl = 'http://localhost:5001/auth/token'
-  const loginUrl = 'http://localhost:5001/auth/login'
-  const logoutUrl = 'http://localhost:5001/auth/logout'
+  const baseUrl = 'http://localhost:5000'
+  const tokenUrl = 'http://localhost:5000/auth/token'
+  const loginUrl = 'http://localhost:5000/auth/login'
+  const logoutUrl = 'http://localhost:5000/auth/logout'
 
   const state = reactive({
     token: localStorage.getItem('token'),
@@ -51,6 +51,8 @@ export const useSessionStore = defineStore('session', () => {
     const data = JSON.parse(atob(token.split('.')[1]))
     const exp = new Date(data.exp * 1000)
     const now = new Date()
+    console.log(exp)
+    console.log(now)
     console.log(now < exp)
     return now < exp
   }

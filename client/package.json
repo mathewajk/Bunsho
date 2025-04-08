@@ -15,7 +15,9 @@
     "@formkit/icons": "^1.4.0",
     "@formkit/tailwindcss": "^1.4.0",
     "@formkit/vue": "^0.17.5",
+    "axios": "^1.7.9",
     "pinia": "^2.1.4",
+    "url-pattern": "^1.0.3",
     "vue": "^3.3.4",
     "vue-router": "^4.2.4",
     "vue-timeago3": "^2.3.1"

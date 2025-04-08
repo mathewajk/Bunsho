@@ -3,7 +3,7 @@ import PitchDisplay from './PitchDisplay.vue';
 import axios from 'axios';
 import {ref} from 'vue'
 
-const path = 'http://localhost:5001/api/sentences';
+const path = 'http://localhost:5000/api/sentences';
 const sentences = ref({
     sentences: <Sentence[]>[]
 })

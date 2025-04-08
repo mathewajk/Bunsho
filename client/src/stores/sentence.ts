@@ -7,14 +7,14 @@ import { getNode } from '@formkit/core'
 
 export const useSentenceStore = defineStore('sentence', () => {
   
-  const baseUrl = 'http://localhost:5001'
-  const sentenceListURL = 'http://localhost:5001/api/sentences'
-  const dueSentencesURL = 'http://localhost:5001/api/sentences/due/1'
+  const baseUrl = 'http://localhost:5000'
+  const sentenceListURL = 'http://localhost:5000/api/sentences'
+  const dueSentencesURL = 'http://localhost:5000/api/sentences/due/1'
 
-  const parseSentenceUrl = 'http://localhost:5001/api/sentence/process'
-  const addSentenceUrl = 'http://localhost:5001/api/sentences'
+  const parseSentenceUrl = 'http://localhost:5000/api/sentence/process'
+  const addSentenceUrl = 'http://localhost:5000/api/sentences'
 
-  const dueWordsURL = 'http://localhost:5001/api/words/due/1'
+  const dueWordsURL = 'http://localhost:5000/api/words/due/1'
 
   const sentenceList = ref({
     next_page: -1,

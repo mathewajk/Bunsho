@@ -10,7 +10,7 @@ import axios from 'axios'
 export const useQuizStore = defineStore('quiz', () => {
 
   const sentenceStore = useSentenceStore()
-  const baseUrl = 'http://localhost:5001'
+  const baseUrl = 'http://localhost:5000'
   const updateWordURL = new UrlPattern('/api/words(/:id)')
 
   const question = ref<Question>({
