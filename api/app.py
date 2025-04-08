@@ -1,28 +1,26 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from flask import Flask
 from flask_migrate import Migrate
 import flask_login
 
 login_manager = flask_login.LoginManager()
 
-def create_app(app_name='SURVEY_API'):
+def create_app(app_name='BUNSHO'):
     app = Flask(app_name)
-    app.config.from_object('api.config.BaseConfig')
+    app.config.from_object('config.BaseConfig')
 
     # enable CORS
     CORS(app, resources={r'/*': {'origins': '*'}})
 
-    from api.api import api
+    from bunsho import api
     app.register_blueprint(api, url_prefix="/api")
 
-    from api.auth import auth
+    from auth import auth
     app.register_blueprint(auth, url_prefix="/auth")
 
-    from api.models import db
+    from models import db, login_manager
     migrate = Migrate(app, db)
- 
     login_manager.init_app(app)
     
     db.init_app(app)

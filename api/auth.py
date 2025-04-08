@@ -9,27 +9,9 @@ import jwt
 from flask import Blueprint, jsonify, request, current_app
 from flask_login import current_user, login_user, logout_user, login_required
 
-from .app import login_manager
-from .models import db, User, UserToken
-
-import bcrypt
+from models import db, User, UserToken
 
 auth = Blueprint('auth', __name__)
-
-@login_manager.user_loader
-def user_loader(user_id):
-    query = db.select(User).where(User.email == user_id)
-    return db.session.execute(query).last()[0]
-
-@login_manager.request_loader
-def request_loader(request):
-    auth = request.headers.get('Authorization')
-    try: 
-        token = jwt.decode(auth, current_app.config['SECRET_KEY'], algorithms=['HS256'])
-        query = db.select(User).where(User.email == token.get('sub'))
-        return db.session.execute(query).first()[0]
-    except:
-        return None
 
 @auth.route('/login', methods=['POST'])
 def login():

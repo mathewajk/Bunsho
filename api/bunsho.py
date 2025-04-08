@@ -10,14 +10,10 @@ from datetime import *
 from dateutil import tz
 import dateutil.parser as parser
 
-import bcrypt
-
 from sqlalchemy import func
 
-from flask_login import current_user, login_user, login_required
-
-from .app import login_manager
-from .models import db, Sentence, Word, User
+from flask_login import current_user, login_required
+from models import db, Sentence, Word
 
 import pykakasi
 

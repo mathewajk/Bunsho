@@ -8,12 +8,28 @@ import jwt, bcrypt
 
 from flask import current_app, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin
+from flask_login import LoginManager, UserMixin
 
 from bcrypt import hashpw, gensalt
 
 db = SQLAlchemy()
+login_manager = LoginManager()
 
+@login_manager.user_loader
+def user_loader(user_id):
+    query = db.select(User).where(User.email == user_id)
+    return db.session.execute(query).last()[0]
+
+@login_manager.request_loader
+def request_loader(request):
+    auth = request.headers.get('Authorization')
+    try: 
+        token = jwt.decode(auth, current_app.config['SECRET_KEY'], algorithms=['HS256'])
+        query = db.select(User).where(User.email == token.get('sub'))
+        return db.session.execute(query).first()[0]
+    except:
+        return None
+    
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
