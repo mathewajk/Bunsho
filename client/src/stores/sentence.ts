@@ -7,14 +7,15 @@ import { getNode } from '@formkit/core'
 
 export const useSentenceStore = defineStore('sentence', () => {
   
-  const baseUrl = 'http://localhost:5000'
-  const sentenceListURL = 'http://localhost:5000/api/sentences'
-  const dueSentencesURL = 'http://localhost:5000/api/sentences/due/1'
+  const baseUrl = import.meta.env.VITE_API_URL
 
-  const parseSentenceUrl = 'http://localhost:5000/api/sentence/process'
-  const addSentenceUrl = 'http://localhost:5000/api/sentences'
+  const sentenceListURL = `${baseUrl}/api/sentences`
+  const dueSentencesURL = `${baseUrl}/api/sentences/due/1`
 
-  const dueWordsURL = 'http://localhost:5000/api/words/due/1'
+  const parseSentenceUrl = `${baseUrl}/api/sentence/process`
+  const addSentenceUrl = `${baseUrl}/api/sentences`
+
+  const dueWordsURL = `${baseUrl}/api/words/due/1`
 
   const sentenceList = ref({
     next_page: -1,

@@ -1,6 +1,6 @@
 """
 models.py
-- Data classes for the surveyapi application
+- Models for the Bunsho app
 """
 
 from datetime import datetime, timedelta
@@ -44,7 +44,7 @@ class User(db.Model, UserMixin):
     def __init__(self, email, username, password):
         self.email = email
         self.username = username
-        self.password = hashpw(bytes(password, 'utf-8'), gensalt())
+        self.password = hashpw(bytes(password, 'utf-8'), gensalt()).decode("utf-8")
 
     def get_id(self):
         return self.email

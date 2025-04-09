@@ -5,11 +5,11 @@ auth.py
 """
 from datetime import datetime, timedelta
 import jwt
-
+import bcrypt
 from flask import Blueprint, jsonify, request, current_app
 from flask_login import current_user, login_user, logout_user, login_required
 
-from models import db, User, UserToken
+from api.models import db, User, UserToken
 
 auth = Blueprint('auth', __name__)
 
@@ -54,7 +54,17 @@ def token():
             return jsonify({ 'token': None,
                              'user': None })
 
-    
+@auth.route('/register', methods=['POST'])
+def register():
+    if request.method == 'POST':
+        email = request.get_json()['email']
+        username = request.get_json()['username']
+        password = request.get_json()['password']
+        user = User(email, username, password)
+        db.session.add(user)
+        db.session.commit()
+        return jsonify({ 'message': 'success' }), 200
+
 @auth.route('/protected')
 @login_required
 def protected():

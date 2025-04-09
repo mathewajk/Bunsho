@@ -1,17 +1,17 @@
-# pull the official base image
-FROM node:21
+# build stage
+FROM node:lts-alpine as build-stage
+ARG VITE_API_URL
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
 
-# set working directory
-WORKDIR /usr/src/app
+ENV VITE_API_URL=$VITE_API_URL
+RUN echo "VITE_API_URL=$VITE_API_URL" > /app/.env
+RUN npm run build
 
-# add `/usr/src/app/node_modules/.bin` to $PATH
-ENV PATH /usr/src/app/node_modules/.bin:$PATH
-ENV HOST=0.0.0.0
-
-# install and cache app dependencies
-COPY package.json .
-COPY package-lock.json .
-RUN npm ci
-
-# start app
-CMD ["npm", "run", "dev"]
+# production stage
+FROM nginx:stable-alpine as production-stage
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

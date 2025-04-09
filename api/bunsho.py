@@ -1,5 +1,5 @@
 """
-api.py
+bunsho.py
 - provides the API endpoints for consuming and producing
   REST requests and responses
 """
@@ -13,7 +13,7 @@ import dateutil.parser as parser
 from sqlalchemy import func
 
 from flask_login import current_user, login_required
-from models import db, Sentence, Word
+from api.models import db, Sentence, Word
 
 import pykakasi
 
@@ -30,7 +30,7 @@ def get_stats():
         ).join(user_sentences)
         due_words_count = db.session.scalar(db.select(func.count()).select_from(due_words_filter))
 
-        new_sentences_filter = db.select(Sentence).where(Sentence.seen == False)
+        new_sentences_filter = db.select(Sentence).where(Sentence.seen == False).where(Sentence.user_id == current_user.id)
         new_sentences_count = db.session.scalar(db.select(func.count()).select_from(new_sentences_filter))
         
         return jsonify({'available_words': due_words_count, 
