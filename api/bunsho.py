@@ -13,7 +13,7 @@ import dateutil.parser as parser
 from sqlalchemy import func
 
 from flask_login import current_user, login_required
-from api.models import db, Sentence, Word
+from models import db, Sentence, Word
 
 import pykakasi
 

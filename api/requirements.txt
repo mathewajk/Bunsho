@@ -12,6 +12,7 @@ Flask-Login==0.6.3
 Flask-Migrate==4.0.4
 Flask-Script==2.0.6
 Flask-SQLAlchemy==3.0.5
+gunicorn==23.0.0
 idna==3.4
 itsdangerous==2.1.2
 jaconv==0.3.4

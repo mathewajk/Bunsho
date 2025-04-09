@@ -1,20 +1,18 @@
-# pull the official base image
-FROM python:3.11
+# Use the Python 3 official image
+# https://hub.docker.com/_/python
+FROM python:3.12
 
-# set the working directory
-WORKDIR /usr/src/app
+# Run in unbuffered mode
+ENV PYTHONUNBUFFERED=1 
 
-# set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+# Create and change to the app directory.
+WORKDIR /app
 
-# install dependencies
-RUN pip install --upgrade pip
-COPY ./requirements.txt .
-RUN pip install -r requirements.txt
+# Copy local code to the container image.
+COPY . ./
 
-# add app
-COPY . .
+# Install project dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# start app
-CMD [ "python", "-m" , "flask", "run", "--port=5000"]
+# Run the web service on container startup.
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:gunicorn_app"]

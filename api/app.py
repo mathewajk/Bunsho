@@ -8,18 +8,18 @@ login_manager = flask_login.LoginManager()
 
 def create_app(app_name='BUNSHO'):
     app = Flask(app_name)
-    app.config.from_object('api.settings')
+    app.config.from_object('settings')
 
     # enable CORS
     CORS(app, resources={r'/*': {'origins': app.config['ALLOWED_HOSTS']}})
 
-    from api.bunsho import api
+    from bunsho import api
     app.register_blueprint(api, url_prefix="/api")
 
-    from api.auth import auth
+    from auth import auth
     app.register_blueprint(auth, url_prefix="/auth")
 
-    from api.models import db, login_manager
+    from models import db, login_manager
     migrate = Migrate(app, db)
     login_manager.init_app(app)
     
@@ -30,3 +30,5 @@ def create_app(app_name='BUNSHO'):
 if __name__ == '__main__':
     app = create_app()
     app.run()
+else:
+    gunicorn_app = create_app()

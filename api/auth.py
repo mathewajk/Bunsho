@@ -9,7 +9,7 @@ import bcrypt
 from flask import Blueprint, jsonify, request, current_app
 from flask_login import current_user, login_user, logout_user, login_required
 
-from api.models import db, User, UserToken
+from models import db, User, UserToken
 
 auth = Blueprint('auth', __name__)
 
