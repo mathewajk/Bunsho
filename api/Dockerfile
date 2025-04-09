@@ -1,6 +1,6 @@
 # Use the Python 3 official image
 # https://hub.docker.com/_/python
-FROM python:3.12
+FROM python:3.11
 
 # Run in unbuffered mode
 ENV PYTHONUNBUFFERED=1 
@@ -12,6 +12,8 @@ WORKDIR /app
 COPY . ./
 
 # Install project dependencies
+RUN pip install wheel
+RUN pip install --upgrade setuptools
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Run the web service on container startup.
