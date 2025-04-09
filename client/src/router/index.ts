@@ -4,6 +4,7 @@ import SentenceListView from '../views/SentenceListView.vue'
 import SentenceStudyView from '../views/SentenceStudyView.vue'
 import AddSentenceView from '../views/AddSentenceView.vue'
 import LoginView from '../views/LoginView.vue'
+import RegistrationView from '../views/RegistrationView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +39,11 @@ const router = createRouter({
       name: 'login',
       component: LoginView
     },
+    {
+      path: '/register',
+      name: 'register',
+      component: RegistrationView
+    }
   ]
 })
 

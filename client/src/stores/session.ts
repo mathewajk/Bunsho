@@ -7,10 +7,11 @@ import axios from 'axios'
 
 export const useSessionStore = defineStore('session', () => {
 
-  const baseUrl = 'http://localhost:5000'
-  const tokenUrl = 'http://localhost:5000/auth/token'
-  const loginUrl = 'http://localhost:5000/auth/login'
-  const logoutUrl = 'http://localhost:5000/auth/logout'
+  const baseUrl = import.meta.env.VITE_API_URL
+  const tokenUrl = `${baseUrl}/auth/token`
+  const loginUrl = `${baseUrl}/auth/login`
+  const logoutUrl = `${baseUrl}/auth/logout`
+  const registerUrl = `${baseUrl}/auth/register`
 
   const state = reactive({
     token: localStorage.getItem('token'),
@@ -96,8 +97,21 @@ export const useSessionStore = defineStore('session', () => {
     router.push('/')
   }
 
+  const register = (email:string, username:string, password:string) => {
+    return axios.post(registerUrl, {
+      email: email,
+      username: username,
+      password: password,
+    })
+  }
+
   const statsURL = new UrlPattern('/api/stats')
-  const userStats = ref({})
+  type UserStats = {
+    available_sentences: number,
+    available_words: number
+  }
+
+  const userStats = ref<UserStats>({ available_sentences: 0, available_words: 0 })
   const fetchStats = () => {
     return axios.get(baseUrl + statsURL.stringify())
         .then((response) => {
@@ -109,5 +123,5 @@ export const useSessionStore = defineStore('session', () => {
     return state.user
   }
 
-  return { isLoading, isAuthenticated, setJwtToken, refreshJwtToken, login, logout, fetchStats, userStats, getUser }
+  return { isLoading, isAuthenticated, setJwtToken, refreshJwtToken, login, logout, fetchStats, userStats, getUser, register }
 })
